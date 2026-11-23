@@ -297,7 +297,7 @@ public class AiTaskService {
             requestBody.put("model", visionModel);
             requestBody.put("messages", messages);
             requestBody.put("temperature", 0.1);
-            requestBody.put("max_tokens", 1500);
+            requestBody.put("max_tokens", 800);
 
             try {
                 HttpEntity entity = new HttpEntity(requestBody, headers);
@@ -361,15 +361,16 @@ public class AiTaskService {
                             || lower.contains("embed") || lower.contains("decommissioned")) {
                         continue;
                     }
-                    if (lower.contains("llama-3.3") || lower.contains("llama-3.1") || lower.contains("qwen") || lower.contains("gemma")) {
+                    if (lower.contains("llama-4") || lower.contains("gpt-oss") || lower.contains("qwen")
+                            || lower.contains("llama-3.3") || lower.contains("llama-3.1") || lower.contains("gemma")) {
                         candidates.add(id);
                     }
                 }
             }
         } catch (Exception ignored) {}
 
-        candidates.add("llama-3.3-70b-versatile");
-        candidates.add("llama-3.1-8b-instant");
+        candidates.add("meta-llama/llama-4-scout-17b-16e-instruct");
+        candidates.add("qwen/qwen3.8-27b");
 
         return new ArrayList(candidates);
     }
@@ -388,13 +389,15 @@ public class AiTaskService {
             requestBody.put("model", modelName);
             requestBody.put("messages", messages);
             requestBody.put("temperature", 0.2);
-            requestBody.put("max_tokens", 1200);
-            requestBody.put("response_format", Map.of("type", "json_object"));
+            requestBody.put("max_tokens", 750);
 
             try {
                 HttpEntity entity = new HttpEntity(requestBody, headers);
                 String body = restTemplate.postForObject(apiUrl, entity, String.class);
-                if (body != null) return body;
+                if (body != null) {
+                    System.out.println("[AiTaskService] Successfully generated task with model: " + modelName);
+                    return body;
+                }
             } catch (HttpStatusCodeException httpEx) {
                 errors.add(modelName + " -> " + httpEx.getStatusCode() + ": " + httpEx.getResponseBodyAsString());
             } catch (Exception e) {

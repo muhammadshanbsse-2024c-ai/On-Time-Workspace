@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+export const BACKEND_URL = (
+  import.meta.env.VITE_BACKEND_URL || 'https://remember-rely-correlation-mas.trycloudflare.com'
+).replace(/\/$/, '');
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || `${BACKEND_URL}/api`,
@@ -35,7 +37,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       console.warn('Unauthorized or Token Expired for endpoint:', error.config?.url);
-      
+
       // Clear storage and redirect ONLY if token is completely invalid/missing on protected routes
       const token = localStorage.getItem('token');
       if (!token && !window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {

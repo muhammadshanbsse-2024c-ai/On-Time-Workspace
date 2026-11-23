@@ -35,3 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+uploads/
+build/
+
+uploads/
+build/
+
+data/
+*.db
